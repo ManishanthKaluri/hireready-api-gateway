@@ -10,3 +10,6 @@ management:
     web:
       exposure:
         include: health,info
+jwt:
+  secret: hireready-secret-key-very-long-and-secure
+
