@@ -11,10 +11,19 @@ public class GatewayRoutesConfig {
     @Bean
     public RouteLocator customRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+
+                // Auth Service
                 .route("auth-service", r -> r
                         .path("/api/auth/**")
                         .uri("http://localhost:8081")
                 )
+
+                // Candidate Service
+                .route("candidate-service", r -> r
+                        .path("/api/candidates/**")
+                        .uri("http://localhost:8082")
+                )
+
                 .build();
     }
 }

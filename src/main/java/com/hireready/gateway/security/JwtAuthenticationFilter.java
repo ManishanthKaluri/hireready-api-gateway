@@ -9,7 +9,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import reactor.core.publisher.Mono;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements GlobalFilter {
@@ -41,21 +40,25 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         try {
             Claims claims = jwtUtil.validateAndExtractClaims(token);
 
-            // OPTIONAL: forward user info to downstream services
-            exchange = exchange.mutate()
+            String userId = claims.getSubject();   // subject = userId
+
+            String email = claims.get("email", String.class);
+            String role = claims.get("role", String.class);
+
+            ServerWebExchange mutatedExchange = exchange.mutate()
                     .request(r -> r.headers(headers -> {
-                        headers.add("X-User-Id", claims.getSubject());
-                        headers.add("X-User-Email",
-                                claims.get("email", String.class));
+                        headers.set("X-User-Id", userId);
+                        headers.set("X-User-Email", email);
+                        headers.set("X-User-Role", role);
                     }))
                     .build();
+
+            return chain.filter(mutatedExchange);
 
         } catch (Exception e) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
-
-        return chain.filter(exchange);
     }
 }
 
