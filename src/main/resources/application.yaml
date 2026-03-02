@@ -13,3 +13,8 @@ management:
 jwt:
   secret: hireready-secret-key-very-long-and-secure
 
+
+redis:
+  host: localhost
+  port: 6379
+
