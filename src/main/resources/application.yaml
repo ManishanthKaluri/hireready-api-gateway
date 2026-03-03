@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: api-gateway
+  data:
+    redis:
+      host: hireready-redis
+      port: 6379
 
 management:
   endpoints:
@@ -14,7 +18,8 @@ jwt:
   secret: hireready-secret-key-very-long-and-secure
 
 
-redis:
-  host: localhost
-  port: 6379
+# redis:
+#   host: localhost
+#   port: 6379
+
 
