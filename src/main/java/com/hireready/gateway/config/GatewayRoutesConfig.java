@@ -21,56 +21,56 @@ public class GatewayRoutesConfig {
                 .path("/api/auth/**")
                 .filters(f -> f
                         .requestRateLimiter(config -> config
-                                .setRateLimiter(authRateLimiter())
+                                .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(userKeyResolver())
                         )
                 )
-                .uri("http://localhost:8081")
+                .uri("http://auth-service:8081")
                 )
 
                 .route("resume-upload", r -> r
                 .path("/api/candidates/*/resume")
                 .filters(f -> f
                         .requestRateLimiter(config -> config
-                                .setRateLimiter(resumeRateLimiter())
+                                .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(userKeyResolver())
                         )
                 )
-                .uri("http://localhost:8082")
+                .uri("http://candidate-service:8082")
                 )
 
                 .route("interview-start", r -> r
                 .path("/api/interviews/start")
                 .filters(f -> f
                         .requestRateLimiter(config -> config
-                                .setRateLimiter(interviewStartRateLimiter())
+                                .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(userKeyResolver())
                         )
                 )
-                .uri("http://localhost:8083")
+                .uri("http://interview-service:8083")
                 )
 
                 .route("interview-submit", r -> r
                 .path("/api/interviews/submit")
                 .filters(f -> f
                         .requestRateLimiter(config -> config
-                                .setRateLimiter(interviewSubmitRateLimiter())
+                                .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(userKeyResolver())
                         )
                 )
-                .uri("http://localhost:8083")
+                .uri("http://interview-service:8083")
                 )
 
                  // Generic Candidate Routes
                 .route("candidate-service", r -> r
                         .path("/api/candidates/**")
-                        .uri("http://localhost:8082")
+                        .uri("http://candidate-service:8082")
                 )
 
                 // Generic Interview Service
                 .route("interview-service", r -> r
                         .path("/api/interviews/**")
-                        .uri("http://localhost:8083")
+                        .uri("http://interview-service:8083")
                 )
 
 
@@ -95,20 +95,9 @@ public class GatewayRoutesConfig {
         };
 }
 
-public RedisRateLimiter authRateLimiter() {
-    return new RedisRateLimiter(3, 6);
-}
-
-public RedisRateLimiter resumeRateLimiter() {
-    return new RedisRateLimiter(1, 2);
-}
-
-public RedisRateLimiter interviewStartRateLimiter() {
-    return new RedisRateLimiter(2, 5);
-}
-
-public RedisRateLimiter interviewSubmitRateLimiter() {
-    return new RedisRateLimiter(3, 6);
+@Bean
+public RedisRateLimiter redisRateLimiter() {
+    return new RedisRateLimiter(5, 10);
 }
 
 }
